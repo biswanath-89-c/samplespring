@@ -1,10 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE tiles-definitions PUBLIC
-       "-//Apache Software Foundation//DTD Tiles Configuration 2.1//EN"
-       "http://tiles.apache.org/dtds/tiles-config_2_1.dtd">
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
 <tiles-definitions>
-	<definition name="basetemplate" template="/WEB-INF/velocity/base.vm">
-	    <put-attribute name="mytitle" value="Hello" type="string" />
-	</definition>
+    <definition name="baseLayout" template="/velocity/hello.vm">
+        <put-attribute name="title" value="" />
+        <put-attribute name="header" value="/WEB-INF/content/tiles/Header.jsp" />
+        <put-attribute name="body" value="" />
+        <put-attribute name="footer" value="/WEB-INF/content/tiles/Footer.jsp" />
+    </definition>
+    <definition name="showTime.tiles" extends="baseLayout">
+        <put-attribute name="title" value="Server Time" />
+        <put-attribute name="body" value="/WEB-INF/content/DisplayServerTime.jsp" />
+    </definition>
+    <definition name="showVisits.tiles" extends="baseLayout">
+        <put-attribute name="title" value="Total Visits" />
+        <put-attribute name="body" value="/WEB-INF/content/hello.vm" />
+    </definition>
 </tiles-definitions>
-

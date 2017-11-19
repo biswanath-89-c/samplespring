@@ -4,21 +4,26 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.struts2.dispatcher.StrutsRequestWrapper;
 import org.apache.tiles.Attribute;
 import org.apache.tiles.context.TilesRequestContext;
 import org.apache.tiles.impl.InvalidTemplateException;
 import org.apache.tiles.renderer.impl.AbstractTypeDetectingAttributeRenderer;
+import org.apache.tiles.servlet.context.ServletTilesRequestContext;
 import org.apache.tiles.servlet.context.ServletUtil;
 import org.apache.tiles.util.IteratorEnumeration;
-import org.apache.tiles.velocity.context.VelocityTilesRequestContext;
 import org.apache.tiles.velocity.renderer.VelocityAttributeRenderer;
 import org.apache.velocity.Template;
+import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.context.InternalContextAdapter;
+import org.apache.velocity.context.InternalWrapperContext;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.tools.view.JeeConfig;
 import org.apache.velocity.tools.view.VelocityView;
 
@@ -49,6 +54,7 @@ public class ContextPassingVelocityAttributeRenderer extends
 	private VelocityEngine engine;
 
 	public ContextPassingVelocityAttributeRenderer(VelocityEngine engine) {
+		System.out.println(" -- Velocity engine: "+engine);
 		this.engine = engine;
 	}
 
@@ -73,18 +79,31 @@ public class ContextPassingVelocityAttributeRenderer extends
 	public void commit() {
 		velocityView = new VelocityView(new TilesApplicationContextJeeConfig());
 		velocityView.setVelocityEngine(engine);
+		System.out.println(" -- After Commit --");
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void write(Object value, Attribute attribute,
 			TilesRequestContext request) throws IOException {
+		System.out.println(" -- write() request: "+request);
+		System.out.println(" -- value: "+value);
 		if (value != null) {
+			System.out.println(" -- value is not null --");
 			if (value instanceof String) {
-				InternalContextAdapter adapter = (InternalContextAdapter) ((VelocityTilesRequestContext) request)
-						.getRequestObjects()[0];
-				Context context = adapter.getInternalUserContext();
+				System.out.println(" -- value is String --");
+                ServletTilesRequestContext servletRequest = ServletUtil.getServletRequest(request);
+                System.out.println("-- got servletReq --"+servletRequest);
+                // then get a context
+                Context context = velocityView.createContext(servletRequest
+                        .getRequest(), servletRequest.getResponse());
+                System.out.println("-- got context --"+context);
+                
+                Vector loader=(Vector) velocityView.getVelocityEngine().getProperty(RuntimeConstants.RESOURCE_LOADER);
+                velocityView.getVelocityEngine().clearProperty("springMacro");
 				Template template = velocityView.getTemplate((String) value);
+				System.out.println(" -- Template Accesible:"+template+" -- "+loader);
+				System.out.println("-- Setting Context --");
 				velocityView.merge(template, context, request.getWriter());
 			} else {
 				throw new InvalidTemplateException(
@@ -127,7 +146,7 @@ public class ContextPassingVelocityAttributeRenderer extends
 		}
 
 		/** {@inheritDoc} */
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		public Enumeration getInitParameterNames() {
 			return new IteratorEnumeration(params.keySet().iterator());
 		}
@@ -142,5 +161,6 @@ public class ContextPassingVelocityAttributeRenderer extends
 			return ServletUtil.getServletContext(applicationContext);
 		}
 	}
+
 
 }

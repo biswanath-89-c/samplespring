@@ -10,7 +10,6 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.tiles2.TilesConfigurer;
 import org.springframework.web.servlet.view.velocity.VelocityConfig;
 import org.springframework.web.servlet.view.velocity.VelocityConfigurer;
-import org.springframework.web.servlet.view.velocity.VelocityToolboxView;
 import org.springframework.web.servlet.view.velocity.VelocityViewResolver;
 
 @Configuration

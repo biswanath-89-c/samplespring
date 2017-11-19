@@ -1,8 +1,6 @@
 #tiles_insertTemplate({"template":"template.vm"})
   #tiles_putAttribute({"name":"title", "value": "Test Title"})#end
   #tiles_putAttribute({"name":"body"})
-    #parse("base.vm")
+    #parse("body.vm")
   #end
 #end
-
-$tiles.insertTemplate({"template":"template.vm"})

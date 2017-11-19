@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tools>
+	<toolbox scope="session">
+        <property name="create-session" value="true" type="boolean"/>
+        <tool key="map" class="java.util.HashMap"/>
+    </toolbox>	
+    <toolbox scope="request">
+    	<tool key="tile" class="org.apache.velocity.tools.struts.TilesTool"/>
+    </toolbox>
+</tools>
